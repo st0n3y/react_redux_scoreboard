@@ -1,7 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 
 export default class Stopwatch extends Component {
-	state = {
+	
+  // this state is tightly coupled to this component 
+  // and has no dependencies on any other component, 
+  // so is not a good candidate for Redux treatment
+  state = {
 		running: false,
       	previouseTime: 0,
       	elapsedTime: 0,
@@ -11,42 +15,42 @@ export default class Stopwatch extends Component {
 		this.interval = setInterval(this.onTick);
 	};
 
-  	componentWillUnmount() {
-  		clearInterval(this.interval);
-  	};
+	componentWillUnmount() {
+		clearInterval(this.interval);
+	};
 
-  	onStart = () => {
-    	this.setState({
-      		running: true,
+	onStart = () => {
+  	this.setState({
+    		running: true,
+    		previousTime: Date.now(),
+  	});
+	};
+
+	onStop = () => {
+  	this.setState({
+   		running: false,
+  	});
+	};
+
+	onReset = () => {
+  	this.setState({
+    		elapsedTime: 0,
+    		previousTime: Date.now(),
+  	});
+	};
+
+	onTick = () => {
+  	if (this.state.running) {
+    		var now = Date.now();
+    		this.setState({
+      		elapsedTime: this.state.elapsedTime + (now - this.state.previousTime),
       		previousTime: Date.now(),
-    	});
-  	};
+    		});
+  	}
+	};
 
-  	onStop = () => {
-    	this.setState({
-     		running: false,
-    	});
-  	};
-
-  	onReset = () => {
-    	this.setState({
-      		elapsedTime: 0,
-      		previousTime: Date.now(),
-    	});
-  	};
-
-  	onTick = () => {
-    	if (this.state.running) {
-      		var now = Date.now();
-      		this.setState({
-        		elapsedTime: this.state.elapsedTime + (now - this.state.previousTime),
-        		previousTime: Date.now(),
-      		});
-    	}
-  	};
-
-  	render() {
-    var seconds = Math.floor(this.state.elapsedTime / 1000);
+	render() {
+  var seconds = Math.floor(this.state.elapsedTime / 1000);
     return (
       <div className="stopwatch" >
         <h2>Stopwatch</h2>
